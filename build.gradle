@@ -1,0 +1,49 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    compile 'commons-io:commons-io:2.4'
+    compile 'commons-cli:commons-cli:1.2'
+
+    compile 'org.eclipse.jetty:jetty-server:9.2.5.v20141112'
+    compile 'org.eclipse.jetty:jetty-servlet:9.2.5.v20141112'
+
+    compile 'org.json:json:20141113'
+
+    compile 'org.elasticsearch:elasticsearch:1.4.3'
+
+    //compile 'joda-time:joda-time:2.7'
+}
+
+
+task buildJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': 1.0,
+                'Main-Class': 'core.Runner'
+    }
+    baseName = project.name
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    copy{
+        from 'src/main/resources/conf'
+        into 'build/libs/conf'
+    }
+
+    copy{
+        from 'src/main/resources/scripts'
+        into 'build/libs/scripts'
+    }
+
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    with jar
+}

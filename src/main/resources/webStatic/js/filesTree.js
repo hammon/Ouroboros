@@ -1,0 +1,158 @@
+Ext.define('Ouroboros.FilesTree', {
+    extend: 'Ext.tree.Panel',
+    alias: 'widget.filestree',
+
+    id: 'filesTree',
+    title: 'Files',
+    rootVisible: false,
+
+//    requires: [
+//            'Ext.data.*',
+//            'Ext.grid.*',
+//            'Ext.tree.*',
+//            'Ext.ux.CheckColumn'
+//
+//        ],
+
+    xtype: 'tree-grid',//'tree-reorder',
+
+    columns: [{
+                    xtype: 'treecolumn', //this is so we know which column will show the tree
+                    text: 'Name',
+                    flex: 2,
+                    sortable: true,
+                    dataIndex: 'text'
+                },
+                {
+                   // xtype: 'treecolumn', //this is so we know which column will show the tree
+                    text: 'Size',
+                    flex: 1,
+                    sortable: true,
+                    dataIndex: 'length'
+                },
+                {
+                    xtype: 'datecolumn',
+                    format: 'Y-m-d H:i:s',
+                    text: 'lastModified',
+                    flex: 1,
+                    sortable: true,
+                    dataIndex: 'lastModified'
+                },
+                {
+                    xtype: 'checkcolumn',
+                    header: 'selected',
+                    dataIndex: 'selected',
+                    width: 55,
+                    stopSelection: false,
+                    menuDisabled: true,
+                     listeners: {
+                    checkchange: function( that, rowIndex, checked, eOpts ) {
+                        //Ext.Msg.alert('Editing' + (record.get('selected') ? ' completed task' : '') , record.get('text'));
+                        console.log("checkchange" + rowIndex + " checked " + checked);
+                    }
+                    }
+                }
+                ],
+    initComponent : function(){
+
+
+
+        this.store = Ext.create('Ext.data.TreeStore', {
+             root: {
+                 text: 'Root',
+                 expanded: true
+             },
+             folderSort: true,
+             fields: [
+                  {name: 'text',  type: 'string'},
+                  {name: 'lastModified',  type: 'date', format: 'Y-m-d H:i:s' },
+                  {name: 'length',   type: 'int'},
+                  {name: 'selected',   type: 'boolean'}
+             ]
+                             //, lastModified
+//             sorters: [{
+//                 property: 'text',
+//                 direction: 'ASC'
+//             }]
+         });
+
+         this.viewConfig = {
+             plugins: {
+                 ptype: 'treeviewdragdrop',
+                 containerScroll: true
+             }
+         };
+
+        var treeStore = this.getStore();
+        var root = treeStore.getRootNode();
+
+        http.get("/api/files?op=list&path=",function(res){
+            console.log(res);
+
+            var filesArr = JSON.parse(res);
+
+            filesArr.forEach(function(file){
+                root.appendChild(file);
+            });
+
+            treeStore.sort([
+                {
+                    property : 'text',
+                    direction: 'ASC'
+                }
+            ]);
+        });
+
+
+         this.callParent(arguments);
+    },
+
+
+
+    listeners: {
+        //itemclick: function( that, record, item, index, e, eOpts) {
+        select : function( that, record, index, eOpts ){
+
+            var path = record.getPath('text','/').replace('/Root/','');
+
+            if(record.data.leaf === false){
+
+                 http.get("/api/files?op=list&path=" + path,function(res){
+                    console.log(res);
+
+                    record.removeAll();
+                    var filesArr = JSON.parse(res);
+
+                    filesArr.forEach(function(file){
+                        record.appendChild(file);
+                    });
+
+                    record.expand();
+                });
+            }
+            else{
+
+                http.get("/api/text?path=" + path,function(res){
+                    //console.log(res);
+
+                   Ext.getCmp('textView').update("<pre>" + res + "</pre>");
+                });
+
+                 http.get("/api/chargram?path=" + path,function(res){
+                    //console.log(res);
+
+                  //  var ngramsGrid = Ext.getCmp('ngramsGrid').getStore().loadData(JSON.parse(res));
+                 });
+
+                http.get("/api/ngram?path=" + path,function(res){
+                    //console.log(res);
+
+                    var ngramsGrid = Ext.getCmp('ngramsGrid').getStore().loadData(JSON.parse(res));
+                });
+            }
+
+
+
+        }
+    }
+});
