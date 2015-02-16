@@ -37,26 +37,26 @@ public class JettyEmbeddedRunner {
         startServer();
     }
 
-    class AuthResourceHandler extends ResourceHandler{
-        @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-            String authHeader = request.getHeader("Authorization");
-
-            if (authHeader != null ) {
-//                String[] up = parseBasic(authHeader.substring(authHeader.indexOf(" ") + 1));
-//                String username = up[0];
-//                String password = up[1];
-//                if (authenticateUser(username, password)) {
-//                    super.handle(target, baseRequest, request, response);
-//                    return;
-//                }
-            }
-
-//            response.setHeader("WWW-Authenticate", "BASIC realm=\"SecureFiles\"");
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Please provide username and password");
-            super.handle(target, baseRequest, request, response);
-        }
-    }
+//    class AuthResourceHandler extends ResourceHandler{
+//        @Override
+//        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+//            String authHeader = request.getHeader("Authorization");
+//
+//            if (authHeader != null ) {
+////                String[] up = parseBasic(authHeader.substring(authHeader.indexOf(" ") + 1));
+////                String username = up[0];
+////                String password = up[1];
+////                if (authenticateUser(username, password)) {
+////                    super.handle(target, baseRequest, request, response);
+////                    return;
+////                }
+//            }
+//
+////            response.setHeader("WWW-Authenticate", "BASIC realm=\"SecureFiles\"");
+////            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Please provide username and password");
+//            super.handle(target, baseRequest, request, response);
+//        }
+//    }
 
     public void startServer() {
         try {
@@ -76,7 +76,7 @@ public class JettyEmbeddedRunner {
 
             //context0.setAttribute("rootPath","/home/michael/dev/Ouroboros/data");
 
-            ResourceHandler rh0 = new AuthResourceHandler();//ResourceHandler();
+            ResourceHandler rh0 = new ResourceHandler();
             rh0.setBaseResource(Resource.newResource(JettyEmbeddedRunner.class.getClassLoader().getResource("webStatic")));
 
             context0.setHandler(rh0);
