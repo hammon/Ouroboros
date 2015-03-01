@@ -34,7 +34,11 @@ public class ESUtils {
     public static void main(String[] args) {
         ESUtils es = new ESUtils();
 
-        es.initData();
+        String res = es.get("news","rss","http://www.bbc.co.uk/news/education-31501917");
+
+        log.info(res);
+
+        //es.initData();
         //JSONObject q = new JSONObject("{'filtered':{}}");
         //JSONObject q = new JSONObject("{bool:{'must':[{'match':{'instance.role':'atlas'}},{'match':{'type':'createInstance'}}]}}");
         //q.put("filter",new JSONObject("{'type':{'value':'task'}}"));
@@ -83,7 +87,7 @@ public class ESUtils {
     Client client;
     public ESUtils(){
         Settings settings = ImmutableSettings.settingsBuilder()
-                .put("cluster.name", "envsconf").build();
+                .put("cluster.name", "michael-x").build();
         client =    new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
     }

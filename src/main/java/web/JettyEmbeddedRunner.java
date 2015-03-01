@@ -127,27 +127,30 @@ public class JettyEmbeddedRunner {
 //                }
 //            }), "/login");
 
-            Constraint constraint = new Constraint();
-            constraint.setName(Constraint.__FORM_AUTH);
-            constraint.setRoles(new String[]{"user","admin","moderator"});
-            constraint.setAuthenticate(true);
 
-            ConstraintMapping constraintMapping = new ConstraintMapping();
-            constraintMapping.setConstraint(constraint);
-            constraintMapping.setPathSpec("/*");
+    //////////////***********************//////////////////////
 
-            ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
-            securityHandler.addConstraintMapping(constraintMapping);
-
-            HashLoginService loginService = new HashLoginService();
-            loginService.putUser("username", new Password("password"), new String[] {"user"});
-            securityHandler.setLoginService(loginService);
-
-            FormAuthenticator authenticator = new FormAuthenticator("/login.html", "/login.html", false);
-
-            securityHandler.setAuthenticator(authenticator);
-
-            context.setSecurityHandler(securityHandler);
+//            Constraint constraint = new Constraint();
+//            constraint.setName(Constraint.__FORM_AUTH);
+//            constraint.setRoles(new String[]{"user","admin","moderator"});
+//            constraint.setAuthenticate(true);
+//
+//            ConstraintMapping constraintMapping = new ConstraintMapping();
+//            constraintMapping.setConstraint(constraint);
+//            constraintMapping.setPathSpec("/*");
+//
+//            ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
+//            securityHandler.addConstraintMapping(constraintMapping);
+//
+//            HashLoginService loginService = new HashLoginService();
+//            loginService.putUser("username", new Password("password"), new String[] {"user"});
+//            securityHandler.setLoginService(loginService);
+//
+//            FormAuthenticator authenticator = new FormAuthenticator("/login.html", "/login.html", false);
+//
+//            securityHandler.setAuthenticator(authenticator);
+//
+//            context.setSecurityHandler(securityHandler);
 
 
 

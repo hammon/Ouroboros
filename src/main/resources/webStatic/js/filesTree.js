@@ -49,6 +49,27 @@ Ext.define('Ouroboros.FilesTree', {
                     checkchange: function( that, rowIndex, checked, eOpts ) {
                         //Ext.Msg.alert('Editing' + (record.get('selected') ? ' completed task' : '') , record.get('text'));
                         console.log("checkchange" + rowIndex + " checked " + checked);
+
+
+                        var arrSelected = [];
+
+                        var findSelected = function(node){
+                            node.eachChild(function(n){
+                                console.log(n.data.text + " " + n.data.selected);
+                                if(n.data['selected'] == true){
+                                    console.log(">>>> " + n.data.text + " " + n.data.selected);
+                                }
+//                                if(n.childNodes.length > 0){
+//                                    n.eachChild(findSelected)
+//                                }
+                            });
+                             if(node.childNodes.length > 0){
+                                node.eachChild(findSelected)
+                            }
+                        }
+
+                       findSelected( that.up().up().getStore().getRootNode());
+
                     }
                     }
                 }

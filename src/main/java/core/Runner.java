@@ -5,6 +5,9 @@ import org.apache.commons.io.FileUtils;
 //import sun.org.mozilla.javascript.internal.Context;
 //import sun.org.mozilla.javascript.internal.Scriptable;
 //import utils.*;
+import utils.ESUtils;
+import utils.HttpUtils;
+import utils.ProcessUtils;
 import web.JettyEmbeddedRunner;
 
 import javax.script.*;
@@ -47,20 +50,20 @@ public class Runner {
                 }
 
 
-                //Bindings bindings = engine.getBindings( ScriptContext.GLOBAL_SCOPE );
+                Bindings bindings = engine.getBindings( ScriptContext.GLOBAL_SCOPE );
 
-//                bindings.put("http",new HttpUtils());
+                bindings.put("http",new HttpUtils());
 //                bindings.put("exasol",new ExasolUtils());
 //                bindings.put("mssql",new MsSqlUtils());
 //                bindings.put("runner",new BasicUtils(engine));
 //                //   bindings.put("gradle",new utils.GradleUtils());
 //                bindings.put("ec2",new AmazonEC2Utils());
 //                bindings.put("ssh",new SshUtils());
-//                bindings.put("proc",new ProcessUtils());
+                bindings.put("proc",new ProcessUtils());
 //                bindings.put("jmx",new JmxUtils());
 //                bindings.put("route53",new AmazonRoute53Utils());
 //                bindings.put("salt",new SaltStackUtils());
-//                bindings.put("es",new ESUtils());
+                bindings.put("es",new ESUtils());
 
                 engine.eval(new FileReader(cli.cmd.getOptionValue("f")));
 
