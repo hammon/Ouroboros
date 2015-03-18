@@ -45,32 +45,32 @@ Ext.define('Ouroboros.FilesTree', {
                     width: 55,
                     stopSelection: false,
                     menuDisabled: true,
-                     listeners: {
-                    checkchange: function( that, rowIndex, checked, eOpts ) {
-                        //Ext.Msg.alert('Editing' + (record.get('selected') ? ' completed task' : '') , record.get('text'));
-                        console.log("checkchange" + rowIndex + " checked " + checked);
+                    listeners: {
+                        checkchange: function( that, rowIndex, checked, eOpts ) {
+                            //Ext.Msg.alert('Editing' + (record.get('selected') ? ' completed task' : '') , record.get('text'));
+                            console.log("checkchange" + rowIndex + " checked " + checked);
 
+                            var arrSelected = [];
 
-                        var arrSelected = [];
+                            var findSelected = function(node){
+                                node.eachChild(function(n){
+                                    //console.log(n.data.text + " " + n.data.selected);
+                                    if(n.data['selected'] == true){
+                                        console.log(">>>> " + n.data.text + " " + n.data.selected);
+                                        arrSelected.push(n.getPath('text'));
+                                    }
+                                });
 
-                        var findSelected = function(node){
-                            node.eachChild(function(n){
-                                console.log(n.data.text + " " + n.data.selected);
-                                if(n.data['selected'] == true){
-                                    console.log(">>>> " + n.data.text + " " + n.data.selected);
+                                if(node.childNodes.length > 0){
+                                    node.eachChild(findSelected);
                                 }
-//                                if(n.childNodes.length > 0){
-//                                    n.eachChild(findSelected)
-//                                }
-                            });
-                             if(node.childNodes.length > 0){
-                                node.eachChild(findSelected)
                             }
+
+                           findSelected( that.up().up().getStore().getRootNode());
+
+                           console.log("arrSelected: " + JSON.stringify(arrSelected));
+
                         }
-
-                       findSelected( that.up().up().getStore().getRootNode());
-
-                    }
                     }
                 }
                 ],

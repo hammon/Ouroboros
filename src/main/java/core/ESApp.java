@@ -1,4 +1,4 @@
-package utils;
+package core;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;

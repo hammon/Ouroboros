@@ -1,5 +1,8 @@
 package utils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.logging.Logger;
 
 /**
@@ -14,11 +17,22 @@ public class WebUtils {
     public static void main(String args[]) {
         ProcessUtils proc = new ProcessUtils();
 
-        String url = "http://www.theverge.com/tldr/2015/2/17/8054427/nba-all-star-michael-jordan-last-shot-byron-russel-was-fouled";//http://www.theverge.com/2015/2/16/8044727/jony-ive-lightsaber-design";
+        String url = "http://www.reuters.com";//http://www.theverge.com/2015/2/16/8044727/jony-ive-lightsaber-design";
 
         String res = getBodyText( url);
 
         log.info("res:" + res);
+
+        JSONObject obj = new JSONObject(res);
+
+        JSONArray arrLinks = obj.getJSONArray("links");
+
+        for(int i = 0;i < arrLinks.length();i++){
+
+            JSONObject link = arrLinks.getJSONObject(i);
+            System.out.println("href: " + link.getString("href"));
+            System.out.println("text: " + link.getString("text"));
+        }
     }
 
     public static String getBodyText( String url) {

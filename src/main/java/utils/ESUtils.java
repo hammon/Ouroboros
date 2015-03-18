@@ -1,6 +1,8 @@
 package utils;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -14,6 +16,8 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -31,14 +35,16 @@ public class ESUtils {
 
     private static final Logger log = Logger.getLogger(ESUtils.class.getName());
 
+
+
     public static void main(String[] args) {
         ESUtils es = new ESUtils();
 
-        String res = es.get("news","rss","http://www.bbc.co.uk/news/education-31501917");
-
-        log.info(res);
-
-        //es.initData();
+//        String res = es.get("news","rss","http://www.bbc.co.uk/news/education-31501917");
+//
+//        log.info(res);
+//
+        es.initData("ouroboros");
         //JSONObject q = new JSONObject("{'filtered':{}}");
         //JSONObject q = new JSONObject("{bool:{'must':[{'match':{'instance.role':'atlas'}},{'match':{'type':'createInstance'}}]}}");
         //q.put("filter",new JSONObject("{'type':{'value':'task'}}"));
@@ -92,63 +98,58 @@ public class ESUtils {
 
     }
 
-    public void initData(){
+    public void initData(String index){
 
-        String index = "envsconf";
-        CreateIndexResponse createResponse = client.admin().indices().create(Requests.createIndexRequest(index)).actionGet();
 
-        createMapping(index, "task", "conf/es/task-mapping.json");
-        createMapping(index, "instance", "conf/es/instance-mapping.json");
-        createMapping(index, "template", "conf/es/template-mapping.json");
-        createMapping(index, "regionProps", "conf/es/regionProps-mapping.json");
 
-        String envPropsPath = "conf/envs/IR.properties";
-
-        Properties props = new Properties();
         try {
-            if(new java.io.File(envPropsPath).exists()){
-                props.load(new FileInputStream(envPropsPath));
-            }
-            else{
-                props.load(ESUtils.class.getClassLoader().getResourceAsStream(envPropsPath));
-            }
+            CreateIndexResponse createResponse = client.admin().indices().create(Requests.createIndexRequest(index)).actionGet();
         }
-        catch (IOException ex) {
-            ex.printStackTrace();
+        catch (Exception e){
+            log.info(e.getMessage());
         }
 
-        Enumeration<Object> keys = props.keys();
+        File dir = new File("conf/es/mapping");
+        FileFilter fileFilter = new WildcardFileFilter("*.json");
 
-        while (keys.hasMoreElements()){
-            String key = (String) keys.nextElement();
-            JSONObject obj = new JSONObject();
-            obj.put("region","IR");
-            obj.put("name",key);
-            obj.put("value",props.getProperty(key));
-            set(index, "regionProps", obj.toString());
+
+        File[] files = dir.listFiles(fileFilter);
+
+        if(files == null){
+            log.info("No mapping files found.");
+            return;
         }
 
-        String template = null;
-        try {
-            template = IOUtils.toString(ESUtils.class.getClassLoader().getResourceAsStream("conf/envs/basicEnvTeml.json"));
-            log.info(template);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (int i = 0; i < files.length; i++) {
+            createMapping(index, files[i]);
         }
 
-        set(index,"template", new JSONObject(template).toString());
     }
 
-    public void createMapping(String index, String type, String mappingPath) {
-        String mapping = null;
+//    public void createMapping(String index, String type, String mappingPath) {
+//        String mapping = null;
+//        try {
+//            mapping = IOUtils.toString(ESUtils.class.getClassLoader().getResourceAsStream(mappingPath));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        log.info("mapping: " + mapping);
+//        client.admin().indices()
+//                .preparePutMapping(index).setType(type).setSource(new JSONObject(mapping).toString()).execute().actionGet();
+//    }
+
+    public void createMapping(String index,File json){
         try {
-            mapping = IOUtils.toString(ESUtils.class.getClassLoader().getResourceAsStream(mappingPath));
-        } catch (IOException e) {
+            client.admin().indices()
+                    .preparePutMapping(index)
+                    .setType(json.getName().replace(".json",""))
+                    .setSource(FileUtils.readFileToString(json))
+                    .execute()
+                    .actionGet();
+            ;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        log.info("mapping: " + mapping);
-        client.admin().indices()
-                .preparePutMapping(index).setType(type).setSource(new JSONObject(mapping).toString()).execute().actionGet();
     }
 
     public String set(String index,String type,String json){
