@@ -40,7 +40,6 @@ Ext.onReady(function(){
                          }),
                         Ext.create('Ouroboros.SplitView',{
                             region:'center',
-                           // width: 225,
                             items: [
                             Ext.create('Ouroboros.SnippetsGrid',{
                                 region:'center',
@@ -62,5 +61,3 @@ Ext.onReady(function(){
         ]
    });
 });
-
-

@@ -100,8 +100,6 @@ public class ESUtils {
 
     public void initData(String index){
 
-
-
         try {
             CreateIndexResponse createResponse = client.admin().indices().create(Requests.createIndexRequest(index)).actionGet();
         }
@@ -112,9 +110,7 @@ public class ESUtils {
         File dir = new File("conf/es/mapping");
         FileFilter fileFilter = new WildcardFileFilter("*.json");
 
-
         File[] files = dir.listFiles(fileFilter);
-
         if(files == null){
             log.info("No mapping files found.");
             return;

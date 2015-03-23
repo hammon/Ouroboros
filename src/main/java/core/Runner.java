@@ -6,6 +6,7 @@ package core;
 //import utils.*;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
+import tasks.ProcessUrlTask;
 import utils.ESUtils;
 import utils.HttpUtils;
 import utils.ProcessUtils;
@@ -43,6 +44,8 @@ public class Runner {
 
 
         ExecutorService executorService = new ThreadPoolExecutor(5,25,1, TimeUnit.MINUTES,new ArrayBlockingQueue<Runnable>(50));
+
+        executorService.submit(new ProcessUrlTask());
 //
 //                //executorService.execute(new TasksWatchTask(executorService));
 //

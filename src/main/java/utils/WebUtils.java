@@ -11,15 +11,17 @@ import java.util.logging.Logger;
 public class WebUtils {
     private static final Logger log = Logger.getLogger(ProcessUtils.class.getName());
 
-    static String phantomJsPath = "/home/michael/tools/phantomjs/bin/phantomjs";
-    static String scriptPath = "/home/michael/tools/phantomjs/examples/bodyText.js";
+    String phantomJsPath = "/home/michael/tools/phantomjs/bin/phantomjs";
+    String scriptPath = "scripts/phantomjs/pageInfo.js";
 
     public static void main(String args[]) {
-        ProcessUtils proc = new ProcessUtils();
+        //ProcessUtils proc = new ProcessUtils();
+
+        WebUtils web = new WebUtils();
 
         String url = "http://www.reuters.com";//http://www.theverge.com/2015/2/16/8044727/jony-ive-lightsaber-design";
 
-        String res = getBodyText( url);
+        String res = web.getPageInfo(url);
 
         log.info("res:" + res);
 
@@ -35,7 +37,7 @@ public class WebUtils {
         }
     }
 
-    public static String getBodyText( String url) {
+    public String getPageInfo(String url) {
         ProcessUtils proc = new ProcessUtils();
         return proc.exec(phantomJsPath + " " + scriptPath + " " + url);
     }
