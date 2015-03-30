@@ -90,18 +90,22 @@ public class ESUtils {
 //        log.info(ln("get: " + es.get("envsconf","task",id));
     }
 
-    Client client;
+    Client _client;
     public ESUtils(){
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", "michael-x").build();
-        client =    new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
+        _client =    new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
+    }
+
+    public Client getClient(){
+        return _client;
     }
 
     public void initData(String index){
 
         try {
-            CreateIndexResponse createResponse = client.admin().indices().create(Requests.createIndexRequest(index)).actionGet();
+            CreateIndexResponse createResponse = _client.admin().indices().create(Requests.createIndexRequest(index)).actionGet();
         }
         catch (Exception e){
             log.info(e.getMessage());
@@ -136,7 +140,7 @@ public class ESUtils {
 
     public void createMapping(String index,File json){
         try {
-            client.admin().indices()
+            _client.admin().indices()
                     .preparePutMapping(index)
                     .setType(json.getName().replace(".json",""))
                     .setSource(FileUtils.readFileToString(json))
@@ -149,15 +153,15 @@ public class ESUtils {
     }
 
     public String set(String index,String type,String json){
-        return client.prepareIndex(index,type).setSource(json).execute().actionGet().getId();
+        return _client.prepareIndex(index,type).setSource(json).execute().actionGet().getId();
     }
 
     public String set(String index,String type,String id,String json){
-        return client.prepareIndex(index,type,id).setSource(json).execute().actionGet().getId();
+        return _client.prepareIndex(index,type,id).setSource(json).execute().actionGet().getId();
     }
 
     public String get(String index,String type,String id){
-        return client.prepareGet(index, type, id)
+        return _client.prepareGet(index, type, id)
                 .execute()
                 .actionGet().getSourceAsString();
     }
@@ -177,7 +181,7 @@ public class ESUtils {
         }
 
         try {
-            UpdateResponse response = client.update(updateRequest).get();
+            UpdateResponse response = _client.update(updateRequest).get();
             return response.getId();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -189,16 +193,16 @@ public class ESUtils {
 
     public String match(String index,String type,String name,String value){
 
-        SearchResponse response = client.prepareSearch(index).setTypes(type).setQuery(QueryBuilders.matchQuery(name, value)).setSize(10000).execute().actionGet();
+        SearchResponse response = _client.prepareSearch(index).setTypes(type).setQuery(QueryBuilders.matchQuery(name, value)).setSize(10000).execute().actionGet();
         return response.toString();
     }
 
     public String query(String index,String type,JSONObject query){
-        return client.prepareSearch(index).setTypes(type).setQuery(query.toString()).execute().actionGet().toString();
+        return _client.prepareSearch(index).setTypes(type).setQuery(query.toString()).execute().actionGet().toString();
     }
 
     public String delete(String index,String type,String id){
-        return client.prepareDelete(index, type, id)
+        return _client.prepareDelete(index, type, id)
                 .execute()
                 .actionGet().getId();
     }

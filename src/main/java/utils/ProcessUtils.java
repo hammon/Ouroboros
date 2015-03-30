@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
@@ -26,30 +27,84 @@ public class ProcessUtils {
         String res = "";
 
         try {
-            String line;
+
             Process p = Runtime.getRuntime().exec(cmd);
-            BufferedReader bri = new BufferedReader
-                    (new InputStreamReader(p.getInputStream()));
-            BufferedReader bre = new BufferedReader
-                    (new InputStreamReader(p.getErrorStream()));
-            while ((line = bri.readLine()) != null) {
-                res+=line + "\n";
-                //log.info(line);
-            }
-            bri.close();
-            while ((line = bre.readLine()) != null) {
-                //res+=line + "\n";
-                log.info(line);
-            }
-            bre.close();
-            p.waitFor();
-            log.info("Done.");
+            res = getOutput(p);
+
         }
-        catch (Exception err) {
-            err.printStackTrace();
+        catch (Exception e) {
+            log.severe(String.valueOf(e.getStackTrace()));
         }
 
 
+        return res;
+    }
+
+    String exec(String [] cmd){
+
+        String res = "";
+
+        try {
+
+            log.info("ProcessUtils.exec");
+
+            ProcessBuilder builder = new ProcessBuilder(cmd);
+            builder.redirectErrorStream(false);
+            Process p = builder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line = null;
+            while ( (line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(System.getProperty("line.separator"));
+            }
+
+//            Process p = Runtime.getRuntime().exec(cmd);
+//            res = getOutput(p);
+
+            try {
+                int exitValue = p.waitFor();
+                System.out.println("\n\nExit Value is " + exitValue);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            res = stringBuilder.toString();
+
+        }
+        catch (Exception e) {
+            log.severe(String.valueOf(e.getStackTrace()));
+        }
+
+
+        return res;
+    }
+
+     String getOutput( Process p) throws IOException, InterruptedException {
+        String res = "";
+        String line;
+
+        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+        while ((line = bri.readLine()) != null) {
+            res+=line + "\n";
+        //log.info(line);
+        }
+        bri.close();
+
+        while ((line = bre.readLine()) != null) {
+            //res+=line + "\n";
+            log.info(line);
+        }
+
+        bre.close();
+
+       //  p.waitFor();
+
+        log.info("Done.");
         return res;
     }
 }

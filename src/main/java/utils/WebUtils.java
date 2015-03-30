@@ -12,14 +12,14 @@ public class WebUtils {
     private static final Logger log = Logger.getLogger(ProcessUtils.class.getName());
 
     String phantomJsPath = "/home/michael/tools/phantomjs/bin/phantomjs";
-    String scriptPath = "scripts/phantomjs/pageInfo.js";
+    String scriptPath = "/home/michael/dev/Ouroboros/src/main/resources/scripts/phantomjs/pageInfo.js";//"scripts/phantomjs/pageInfo.js";
 
     public static void main(String args[]) {
         //ProcessUtils proc = new ProcessUtils();
 
         WebUtils web = new WebUtils();
 
-        String url = "http://www.reuters.com";//http://www.theverge.com/2015/2/16/8044727/jony-ive-lightsaber-design";
+        String url = "http://www.freedesktop.org/software/systemd/man/systemd-udevd.service.html";
 
         String res = web.getPageInfo(url);
 
@@ -39,6 +39,8 @@ public class WebUtils {
 
     public String getPageInfo(String url) {
         ProcessUtils proc = new ProcessUtils();
-        return proc.exec(phantomJsPath + " " + scriptPath + " " + url);
+
+        return proc.exec(new String[] {phantomJsPath,scriptPath,url});
+        //return proc.exec(phantomJsPath + " " + scriptPath + " \"" + url + "\"");
     }
 }

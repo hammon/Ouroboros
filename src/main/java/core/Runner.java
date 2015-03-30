@@ -31,9 +31,12 @@ public class Runner {
     private static final Logger log = Logger.getLogger(Runner.class.getName());
 
 
+    static ExecutorService executorService = new ThreadPoolExecutor(5,25,1, TimeUnit.MINUTES,new ArrayBlockingQueue<Runnable>(50));
+
     public static void main(String[] args) {
 
         JettyEmbeddedRunner jetty = new JettyEmbeddedRunner();
+
 //        ESApp es = new ESApp();
 
 
@@ -43,7 +46,7 @@ public class Runner {
 //        log.info("es node created");
 
 
-        ExecutorService executorService = new ThreadPoolExecutor(5,25,1, TimeUnit.MINUTES,new ArrayBlockingQueue<Runnable>(50));
+
 
         executorService.submit(new ProcessUrlTask());
 //
