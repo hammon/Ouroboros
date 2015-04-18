@@ -39,6 +39,40 @@ function addJsonTreeNode(treeNode,jsonNode){
 }
 
 
+function treeToJson(treeNode){
+    var jsonNode = null;
+    var type = treeNode.raw.type;
+
+    console.log(treeNode.raw.name + " - " + type + " : " + treeNode.raw.value);
+
+    if(type === "[object Object]"){
+        jsonNode = {};
+        for(var i = 0; i < treeNode.childNodes.length;i++){
+
+            if(treeNode.childNodes[i].raw.leaf){
+                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].raw.value;
+            }
+            else{
+                jsonNode[treeNode.childNodes[i].raw.name] = treeToJson(treeNode.childNodes[i]);
+            }
+        }
+    }
+    else if(type === "[object Array]"){
+        jsonNode = [];
+        for(var i = 0; i < treeNode.childNodes.length;i++){
+            if(treeNode.childNodes[i].raw.leaf){
+                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].raw.value;
+            }
+            else{
+                jsonNode[treeNode.childNodes[i].raw.name] = treeToJson(treeNode.childNodes[i]);
+            }
+        }
+    }
+
+    return jsonNode;
+}
+
+
 Ext.define('Ouroboros.JsonTree', {
     extend: 'Ext.tree.Panel',
     alias: 'widget.jsontree',
@@ -52,6 +86,17 @@ Ext.define('Ouroboros.JsonTree', {
           clicksToEdit:2
         })
       ],
+
+    tbar:[
+        {
+            text: 'Save',
+             handler : function(){
+                var json = treeToJson(this.up().up().store.getRootNode(),{});
+
+                console.log("json from tree: " + JSON.stringify(json));
+             }
+        }
+    ],
 
 //    requires: [
 //            'Ext.data.*',
@@ -139,6 +184,7 @@ Ext.define('Ouroboros.JsonTree', {
         this.store = Ext.create('Ext.data.TreeStore', {
              root: {
                  text: 'Root',
+                 name: 'Root',
                  expanded: true
              },
              folderSort: true,
@@ -168,6 +214,8 @@ Ext.define('Ouroboros.JsonTree', {
             console.log(res);
 
             var jsonObj = JSON.parse(res);
+
+            root.raw.type = Object.prototype.toString.call(jsonObj);
 
             addJsonTreeNode(root,jsonObj);
             //Object.prototype.toString.call(jsonObj.task.arr)

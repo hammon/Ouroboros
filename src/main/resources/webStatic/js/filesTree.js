@@ -171,9 +171,6 @@ Ext.define('Ouroboros.FilesTree', {
                     var ngramsGrid = Ext.getCmp('ngramsGrid').getStore().loadData(JSON.parse(res));
                 });
             }
-
-
-
         }
     }
 });
