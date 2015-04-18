@@ -31,8 +31,6 @@ public class GetTextServlet extends HttpServlet {
 
         File file = new File(root,path);
 
-
-
         PrintWriter out = null;
         try {
             out = response.getWriter();

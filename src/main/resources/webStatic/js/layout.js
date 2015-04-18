@@ -56,7 +56,12 @@ Ext.onReady(function(){
                 {
                     html: '<h2>Web</h2><p>Wellcome!</p>',
                     title: 'Web'
-                }]
+                },
+                Ext.create('Ouroboros.JsonTree',{
+                                                //    region:'center',
+                                                //    minWidth: 100,
+                                                })
+                ]
             })
         ]
    });

@@ -80,7 +80,9 @@ public class JettyEmbeddedRunner {
 
 
             //context.setAttribute("rootPath", "/home/michael/dev/Ouroboros/data");
-            context.setAttribute("rootPath", "/home/michael");
+            //context.setAttribute("rootPath", "/home/michael");
+
+            context.setAttribute("rootPath", "/");
 
             ServletHolder servletHolder = new ServletHolder(FilesServlet.class);
             context.addServlet(servletHolder, "/api/files");
