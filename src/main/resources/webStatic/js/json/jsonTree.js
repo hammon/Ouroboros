@@ -43,14 +43,14 @@ function treeToJson(treeNode){
     var jsonNode = null;
     var type = treeNode.raw.type;
 
-    console.log(treeNode.raw.name + " - " + type + " : " + treeNode.raw.value);
+    console.log(treeNode.raw.name + " - " + type + " : " + treeNode.data.value);
 
     if(type === "[object Object]"){
         jsonNode = {};
         for(var i = 0; i < treeNode.childNodes.length;i++){
 
             if(treeNode.childNodes[i].raw.leaf){
-                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].raw.value;
+                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].data.value;
             }
             else{
                 jsonNode[treeNode.childNodes[i].raw.name] = treeToJson(treeNode.childNodes[i]);
@@ -61,7 +61,7 @@ function treeToJson(treeNode){
         jsonNode = [];
         for(var i = 0; i < treeNode.childNodes.length;i++){
             if(treeNode.childNodes[i].raw.leaf){
-                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].raw.value;
+                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].data.value;
             }
             else{
                 jsonNode[treeNode.childNodes[i].raw.name] = treeToJson(treeNode.childNodes[i]);
@@ -204,6 +204,31 @@ Ext.define('Ouroboros.JsonTree', {
              plugins: {
                  ptype: 'treeviewdragdrop',
                  containerScroll: true
+             },
+             listeners:{
+                 beforecellcontextmenu: function(vthis, td, cellIndex, record, tr, rowIndex, e, eOpts ){
+                     //your menu code here
+                    // alert("beforecellcontextmenu");
+
+                     var menu = new Ext.menu.Menu({
+                         items: [
+                             {
+                                 text: 'Add',
+                                 handler: function(item,e){
+                                    alert("Add");
+                                 }
+                             },
+                             {text: 'Edit'},
+                             {text: 'Delete'}
+                         ]
+                     });
+
+                     menu.showAt(e.getXY());
+
+                 },
+                 itemcontextmenu: function(view,record,item,index,e,eOpts){
+                     e.stopEvent();
+                 }
              }
          };
 
@@ -232,6 +257,13 @@ Ext.define('Ouroboros.JsonTree', {
 //            ]);
         });
 
+//        this.on('itemcontextmenu', function(view, record, item, index, event){
+//                         alert(record)
+//                         //treePanelCurrentNode = record;
+//                         //menu1.showAt(event.getXY());
+//                         event.stopEvent();
+//                 },this);
+
 
          this.callParent(arguments);
     },
@@ -239,6 +271,15 @@ Ext.define('Ouroboros.JsonTree', {
 
 
     listeners: {
+
+//        itemcontextmenu:{
+//            fn: function(view, record, item, index, event){
+//                  alert(record)
+//                  //treePanelCurrentNode = record;
+//                  //menu1.showAt(event.getXY());
+//                  event.stopEvent();
+//              }
+//        },
         //itemclick: function( that, record, item, index, e, eOpts) {
         select : function( that, record, index, eOpts ){
 
