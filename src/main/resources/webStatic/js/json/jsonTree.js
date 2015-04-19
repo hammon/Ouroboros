@@ -98,13 +98,6 @@ Ext.define('Ouroboros.JsonTree', {
         }
     ],
 
-//    requires: [
-//            'Ext.data.*',
-//            'Ext.grid.*',
-//            'Ext.tree.*',
-//            'Ext.ux.CheckColumn'
-//
-//        ],
 
     xtype: 'tree-grid',//'tree-reorder',
 
