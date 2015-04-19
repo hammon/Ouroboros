@@ -8,10 +8,24 @@ function addJsonTreeNode(treeNode,jsonNode){
             console.log("obj: " + m + " : " + jsonNode[m]);
             var t = Object.prototype.toString.call(jsonNode[m]);
 
-            var treeObj = {"name":m,"type":t,"value":jsonNode[m],"leaf":true};
-            if(t === "[object Object]" || t === "[object Array]" ){
+            var treeObj = {
+                              "name" : m,
+                              "type" : t,
+                              "value" : jsonNode[m],
+                              "leaf" : true,
+                              "iconCls" : 'icon-jsonValue'
+                          };
+
+            if(t === "[object Object]"){
                 treeObj.leaf = false;
+                treeObj.iconCls = 'icon-jsonObject';
             }
+            else if( t === "[object Array]" ){
+                treeObj.leaf = false;
+                treeObj.iconCls = 'icon-jsonArray';
+            }
+
+
             var childTreeNode = treeNode.appendChild(treeObj);
 
             addJsonTreeNode(childTreeNode,jsonNode[m]);
@@ -22,10 +36,23 @@ function addJsonTreeNode(treeNode,jsonNode){
             console.log("arr: " + i + " : " + jsonNode[i]);
             var t = Object.prototype.toString.call(jsonNode[i]);
 
-            var treeObj = {"name":i,"type":t,"value":jsonNode[i],"leaf":true};
-            if(t === "[object Object]" || t === "[object Array]" ){
+            var treeObj = {
+                            "name":i,
+                            "type":t,
+                            "value":jsonNode[i],
+                            "leaf":true,
+                            "iconCls" : 'icon-jsonValue'
+                          };
+
+            if(t === "[object Object]"){
                 treeObj.leaf = false;
+                treeObj.iconCls = 'icon-jsonObject';
             }
+            else if( t === "[object Array]" ){
+                treeObj.leaf = false;
+                treeObj.iconCls = 'icon-jsonArray';
+            }
+
             var childTreeNode = treeNode.appendChild(treeObj);
             //var childTreeNode = treeNode.appendChild({"name":i,"type":t,"value":jsonNode[i]});
 
@@ -49,27 +76,39 @@ function treeToJson(treeNode){
         jsonNode = {};
         for(var i = 0; i < treeNode.childNodes.length;i++){
 
-            if(treeNode.childNodes[i].raw.leaf){
-                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].data.value;
+            if(treeNode.childNodes[i].data.leaf){
+                jsonNode[treeNode.childNodes[i].data.name] = castTreeValue(treeNode.childNodes[i]);
             }
             else{
-                jsonNode[treeNode.childNodes[i].raw.name] = treeToJson(treeNode.childNodes[i]);
+                jsonNode[treeNode.childNodes[i].data.name] = treeToJson(treeNode.childNodes[i]);
             }
         }
     }
     else if(type === "[object Array]"){
         jsonNode = [];
         for(var i = 0; i < treeNode.childNodes.length;i++){
-            if(treeNode.childNodes[i].raw.leaf){
-                jsonNode[treeNode.childNodes[i].raw.name] = treeNode.childNodes[i].data.value;
+            if(treeNode.childNodes[i].data.leaf){
+                jsonNode[treeNode.childNodes[i].data.name] = castTreeValue(treeNode.childNodes[i]);
             }
             else{
-                jsonNode[treeNode.childNodes[i].raw.name] = treeToJson(treeNode.childNodes[i]);
+                jsonNode[treeNode.childNodes[i].data.name] = treeToJson(treeNode.childNodes[i]);
             }
         }
     }
 
     return jsonNode;
+}
+
+function castTreeValue(treeNode){
+    if(treeNode.data.type === "[object Number]"){
+        return parseFloat(treeNode.data.value);
+    }
+    else if(treeNode.data.type === "[object Boolean]"){
+        return treeNode.data.value.toLowerCase() === 'true' ? true : false;
+    }
+    else{
+        return treeNode.data.value;
+    }
 }
 
 
@@ -88,6 +127,57 @@ Ext.define('Ouroboros.JsonTree', {
       ],
 
     tbar:[
+        {
+           text: 'Add',
+           menu:{
+               xtype : 'menu',
+               items: [
+                    {
+                       text: 'String',
+                       handler: function(item){
+                            console.log(item);
+                            var tree = this.up().up().up().up();
+                            var selectedNode = null;
+                            if (tree.getSelectionModel().hasSelection()) {
+                                selectedNode = tree.getSelectionModel().getSelection()[0];
+                            } else {
+                                selectedNode = tree.store.getRootNode();
+                            }
+
+                            if(selectedNode.data.leaf){
+                                selectedNode = selectedNode.parentNode;
+                            }
+
+                            selectedNode.appendChild({
+                                "name":"new string",
+                                "type":"[object String]",
+                                "value": "new string value",
+                                "leaf":true,
+                                "iconCls" : 'icon-jsonValue'
+                           });
+                       }
+                    },
+                    {
+                       text: 'Number',
+                       handler: function(item){
+
+                       }
+                    },
+                    {
+                       text: 'Object',
+                       handler: function(item){
+
+                       }
+                    },
+                    {
+                       text: 'Array',
+                       handler: function(item){
+
+                       }
+                    }
+               ]
+               }// Add menu
+        },
         {
             text: 'Save',
              handler : function(){
@@ -228,7 +318,7 @@ Ext.define('Ouroboros.JsonTree', {
         var treeStore = this.getStore();
         var root = treeStore.getRootNode();
 
-        http.get("/api/text?path=home/michael/dev/Ouroboros/src/main/resources/webStatic/task.json",function(res){
+        http.get("/api/text?path=\\basicEnvTeml.json",function(res){
             console.log(res);
 
             var jsonObj = JSON.parse(res);
