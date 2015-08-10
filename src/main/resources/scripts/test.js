@@ -1,13 +1,19 @@
 
-var FileInputStream = java.io.FileInputStream;
-var Properties = java.util.Properties;
 
-var props = new Properties();
+runner.load("../../src/main/resources/scripts/esprima.js");
 
-props.load(new FileInputStream("./conf/test.properties"));
+print(JSON.stringify(esprima.parse(runner.readFile("/home/michael/dev/Ouroboros/src/main/resources/webStatic/js/json/jsonTree.js"))));
 
-print(props.getProperty("test"));
-print(props.getProperty("test2"));
+
+//var FileInputStream = java.io.FileInputStream;
+//var Properties = java.util.Properties;
+//
+//var props = new Properties();
+//
+//props.load(new FileInputStream("./conf/test.properties"));
+//
+//print(props.getProperty("test"));
+//print(props.getProperty("test2"));
 
 
 
@@ -15,14 +21,14 @@ print(props.getProperty("test2"));
 
 //print("Hello Ouroboros!\n" + runner.getWorkingDir());
 //
-//runner.load("../../src/main/resources/scripts/esprima.js");
+//
 //
 //
 for(var m in this){
     print(m + " type: " + typeof this[m] + "\n");
 }
 //
-//print(JSON.stringify(esprima.parse(runner.readFile("../../src/main/resources/scripts/test.js"))));
+//
 
 
 //getMethods(this);

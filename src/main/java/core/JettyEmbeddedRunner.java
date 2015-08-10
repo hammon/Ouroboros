@@ -22,7 +22,7 @@ public class JettyEmbeddedRunner {
 
     }
 
-    int _port = 8080;
+    int _port = 8082;
 
     public void startServer(int port){
         _port = port;

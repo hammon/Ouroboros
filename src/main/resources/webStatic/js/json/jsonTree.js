@@ -318,7 +318,7 @@ Ext.define('Ouroboros.JsonTree', {
         var treeStore = this.getStore();
         var root = treeStore.getRootNode();
 
-        http.get("/api/text?path=\\basicEnvTeml.json",function(res){
+        http.get("/api/text?path=home/michael/dev/Ouroboros/src/main/resources/webStatic/task1.json",function(res){
             console.log(res);
 
             var jsonObj = JSON.parse(res);

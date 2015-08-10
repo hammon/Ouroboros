@@ -78,7 +78,6 @@ public class ProcessUtils {
             log.severe(String.valueOf(e.getStackTrace()));
         }
 
-
         return res;
     }
 

@@ -94,7 +94,7 @@ public class ESUtils {
     public ESUtils(){
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", "michael-x").build();
-        _client =    new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
+        _client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
     }
 
